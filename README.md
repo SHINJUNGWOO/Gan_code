@@ -18,13 +18,13 @@ Practice Generative Adverarial Network for Image Inpainting and Denosing, Style 
 
 #### Inpaint Image
 
-wgan _inapint__*.py
+###### wgan _inapint__*.py
 
 ​	=> OOM Error and Model blank error
 
 ​	
 
-w_global_local.py
+###### w_global_local.py
 
 ​	v_1: global_local model => doesn't work because of OOM
 
@@ -36,7 +36,7 @@ w_global_local.py
 
 
 
-Inpaint.py
+###### Inpaint.py
 
 ​	v_1: basic 모델 128*128
 
@@ -50,7 +50,7 @@ Inpaint.py
 
 #### Generate Image
 
-wgan_cp.py
+###### wgan_cp.py
 
 ​	v_1~v_4 : all model work for me in different Resolution, and another hyper parameter
 
