@@ -142,7 +142,6 @@ class inpainting():
             result = tf.multiply(input_, padded)
 
 
-
         if mode == 'random_box':
             # create patch in random box
 
@@ -160,7 +159,7 @@ class inpainting():
             w_ = tf.random.uniform([1], minval=margin, maxval=self.global_shape[1] - w_size - margin,
                                    dtype=tf.int32)[0]
 
-            padding = [[0, 0], [h_, shape[1] - h_ - h_size], [w_, shape[2] - w_ - w_size], [0, 0]]
+            padding = [[0, 0], [h_, shape[-3] - h_ - h_size], [w_, shape[-2] - w_ - w_size], [0, 0]]
             padded = tf.pad(patch, padding, "CONSTANT", constant_values=1)
 
             for _ in range(random.randint(1,5)):
@@ -177,7 +176,7 @@ class inpainting():
                 w_ = tf.random.uniform([1], minval=margin, maxval=self.global_shape[1] - w_size - margin,
                                        dtype=tf.int32)[0]
 
-                padding = [[0, 0], [h_, shape[1] - h_ - h_size], [w_, shape[2] - w_ - w_size], [0, 0]]
+                padding = [[0, 0], [h_, shape[-3] - h_ - h_size], [w_, shape[-2] - w_ - w_size], [0, 0]]
                 padded *= tf.pad(patch, padding, "CONSTANT", constant_values=1)
 
             result = tf.multiply(input_, padded)
@@ -449,79 +448,13 @@ class inpainting():
         save_img(self.img_save_dir + "coarse" + str(epoch) + ".jpg", coarse_result[0])
         save_img(self.img_save_dir + "refine" + str(epoch) + ".jpg", refine_result[0])
 
-    def test_img(self, img_dir, axis):
-        x, y = axis[0], axis[1]
-        test_img = PIL.Image.open(img_dir)
-        test_img = test_img.resize((256, 256))
-        test_img = np.array(test_img)
-        test_img = test_img / 255
-        test_img = test_img.astype("float32")
-        test_img, test_mask = test.block_patch(test_img, "select_box", x=x, y=y)
-        plt.imshow(test_img[0])
-        plt.show()
+    def test_img(self, test_img, test_mask):
         coarse_result = self.coarse.predict([test_img, test_mask])
         refine_result = self.refine.predict([coarse_result, test_mask])
         plt.imshow(refine_result[0])
         plt.show()
 
 
-
-
-# def celeba_data():
-#     DATA_PATH = '/home/sjo506/Gan_practice/test/data/celeba'
-#     BATCH_SIZE = 1
-#     data_gen = ImageDataGenerator(rescale=1./255)
-#     data_flow = data_gen.flow_from_directory(DATA_PATH,
-#     target_size = [128,128],
-#     batch_size = 1,
-#     shuffle= True,
-#     class_mode='input',
-#     subset='training'
-#         )
-#     return data_flow
-#
-# def place_data():
-#     DATA_PATH = "./data/place365"
-#     BATCH_SIZE = 4
-#     data_gen = ImageDataGenerator(rescale=1./255)
-#     data_flow = data_gen.flow_from_directory(
-#         DATA_PATH,
-#         target_size=[256, 256],
-#         batch_size=BATCH_SIZE,
-#         shuffle=True,
-#         class_mode="input",
-#         subset="training"
-#     )
-#     return data_flow
-#
-# def place_test_data():
-#     DATA_PATH = "./data/place_test"
-#     BATCH_SIZE = 4
-#     data_gen = ImageDataGenerator(rescale=1./255)
-#     data_flow = data_gen.flow_from_directory(
-#         DATA_PATH,
-#         target_size=[128, 128],
-#         batch_size=BATCH_SIZE,
-#         shuffle=True,
-#         class_mode="input",
-#         subset="training"
-#     )
-#     return data_flow
-#
-#
-# def castle_data():
-#     DATA_PATH = "./data/castle"
-#     BATCH_SIZE = 4
-#     data_gen = ImageDataGenerator(rescale=1./255)
-#     data_flow = data_gen.flow_from_directory(
-#         DATA_PATH,
-#         target_size=[256, 256],
-#         batch_size=BATCH_SIZE,
-#         shuffle=True,
-#         class_mode="input",
-#         subset="training"
-#     )
-#     return data_flow
 
 
 def coco_data():
@@ -584,12 +517,18 @@ test = inpainting(
 
 data = castle_test_data()
 #test.load_weight()
-test.refine.summary()
-test.coarse.summary()
-test.discrimin.summary()
-test.train(data, 100)
+#test.train(data, 100)
 
-# test.test_img("./test_castle.jpg",(30,180))
+test_img = PIL.Image.open("./test_castle.jpg")
+test_img = test_img.resize((256, 256))
+test_img = np.array(test_img)
+test_img = test_img / 255
+test_img = test_img.astype("float32")
+plt.imshow(test_img)
+plt.show()
+test_img,test_mask = test.block_patch(test_img, mode='random_box')
+test.test_img(test_img,test_mask)
+# input shape 는 (1,256,256,3) mask는 (1,256,256,1)의 형태
 # test.refine.save("hello")
 
 
