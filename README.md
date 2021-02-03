@@ -38,6 +38,8 @@ Practice Generative Adverarial Network for Image Inpainting and Denosing, Style 
 
 ###### Inpaint.py
 
+- Global local model with context attention layer
+
 ​	v_1: basic 모델 128*128
 
 ​	v_2: basic 모델 256*256
@@ -46,7 +48,13 @@ Practice Generative Adverarial Network for Image Inpainting and Denosing, Style 
 
 ​	v_6: partial_convolution 
 
+Inpaint FiGan
 
+- Freeform Gan
+
+  partial conv.py
+
+  
 
 #### Generate Image
 
